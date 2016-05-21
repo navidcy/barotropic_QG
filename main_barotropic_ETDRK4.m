@@ -1,8 +1,7 @@
 clear all;
 clc
 
-global detadx detady del2 ksq KX KY Nx Ny F beta mu nu4 nu2 dpsidx k0 gamma FILTER;
-global nlsw;
+global del2 ksq KX KY Nx Ny beta mu nu4 nu2 dpsidx k0 FILTER;
 
 
 Nx=2*128;Ny=Nx;
@@ -12,7 +11,7 @@ cl = get(gca,'colororder');
 figNo=10; np=round(Nx/(64/3));
 
  mu = 0e-2;
-nu4 = 0e-07; % for N=128 put 1e-06, for N=256 put 1e-06
+nu4 = 0e-07; % e.g. N=128 choose 1e-06
 nu2 = 0*.0005;
 nofilter=0; % if nofilter=0 then it puts FILTER, if nofilter=1 it does not put FITLER
 beta= 0;
@@ -56,21 +55,6 @@ del2(KX==0&KY==0)=1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FILTER
 
-% OLD FILTER SMITH ET AL
-% s=4;
-% Kmax=Ny/2;
-% kcut=2/3*Kmax;
-% 
-% a = log(1+4*pi/Ny)./(Kmax-kcut).^2
-% K=sqrt(KX.^2+KY.^2);
-% 
-% FILTER = 1*ones(Ny,Nx).*abs(K<=Ny/3) + exp(-a*(K-kcut).^s).*abs(K>Ny/3);
-% % FILTER = ones(Ny,Nx).*(abs(KY)<=2*Ny/2/3).*(abs(KX)<=2*Nx/2/3);
-% FILTERy = FILTER(:,1);
-% 
-% figure(1); clf;plot(fftshift(kx),fftshift(FILTER(1,:)),'b','linewidth',2)
-
-% new filter
 % a is chosen so that the energy at the largest nondim
 % wavenumber K*dx be zero whithin machine double precision
 s=4;
@@ -80,7 +64,6 @@ a = -log(1e-15)/(Kmax_s-kcut_s)^s * dy^s;
 K=sqrt(KX.^2+KY.^2);
 
 FILTER = 1*ones(Ny,Nx).*abs(K<=Ny/3) + exp(-a*(K-kcut).^s).*abs(K>Ny/3);
-% FILTER = ones(Ny,Nx).*(abs(KY)<=2*Ny/2/3).*(abs(KX)<=2*Nx/2/3);
 
 if nofilter==1, FILTER = ones(Ny,Nx);end;
 FILTERy = FILTER(:,1);
@@ -139,8 +122,7 @@ UT(:,ithov) = mean(u,2);
 ithov = ithov+1;
 
 
-teddy = 1/sqrt(Z(1))
-
+teddy = 1/sqrt(Z(1));
 
 
 
@@ -177,7 +159,6 @@ end
 fu = (fu/M); fab = (fab/M); fc = (fc/M); Q = (Q/M);
 % format long
 % [fu(4,5);fab(4,5);fc(4,5);Q(4,5)]
-% asdfasd
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -190,7 +171,7 @@ itpsi=itpsi+1;
 it=1;
 
 psihat = zhat./del2;
-    zeta=real(ifft2(zhat));      
+    zeta=real(ifft2(zhat));
     psi = real(ifft2(psihat));
     u = real(ifft2(-1i*KY.*psihat));
     v = real(ifft2(+1i*KX.*psihat));
@@ -226,7 +207,7 @@ psihat = zhat./del2;
     s=linspace(0,1,151);
     cmap = diverging_map(s,rgb1,rgb2);
     colormap(cmap);
-    
+
 %         subplot(nRow,nCol,[5,6])
 % %         contourf(Thov(1:ithov-1),y,UT(:,1:ithov-1),'linestyle','none');colorbar;
 %         pcolor(mu*Thov(1:1:ithov-1),y,UT(:,1:1:ithov-1));shading interp;colorbar;
@@ -238,7 +219,7 @@ psihat = zhat./del2;
 
 
     drawnow;
-        
+
 %%
 
 
@@ -258,10 +239,10 @@ wv = sqrt(KX.^2+KY.^2);
 tic
 for it=2:length(T);
 
-     
+
     [nlin0_z] = Dtzeta_EDTRK4(zhat);
     k1z = eL2.*zhat + Q.*nlin0_z;
-    
+
     [nlin1_z] = Dtzeta_EDTRK4(k1z);
     k2z = eL2.*zhat + Q.*nlin1_z;
 
@@ -269,7 +250,7 @@ for it=2:length(T);
     k3z = eL2.*k1z + Q.*(2*nlin2_z-nlin0_z);
 
     [nlin3_z] = Dtzeta_EDTRK4(k3z);
-                              
+
 
     zhatnew  = eL.*zhat + fu.*nlin0_z + 2*fab.*(nlin1_z+nlin2_z) +fc.*nlin3_z ;
     zhat = zhatnew.*FILTER;
@@ -282,7 +263,7 @@ for it=2:length(T);
 
     if rem(it,Nthov)==1
         psihat = zhat./del2;
-        zeta=real(ifft2(zhat));      
+        zeta=real(ifft2(zhat));
         psi = real(ifft2(psihat));
         u = real(ifft2(-1i*KY.*psihat));
         v = real(ifft2(+1i*KX.*psihat));
@@ -290,13 +271,13 @@ for it=2:length(T);
         UT(:,ithov) =  mean(u,2);
         ithov=ithov+1;
     end
-    
+
     if rem(it,NtPsit)==1||it==length(T)
         psi = real(ifft2(zhat./del2));
         PsiT(:,itpsi) = reshape(psi,Nx*Ny,1);
         itpsi=itpsi+1;
     end
-    
+
 %     if rem(it,100*Nthov)==1
 %         cfl = sqrt(max((U+u(:)).^2+v(:).^2))*dt/dx;
 %         if cfl>.7
@@ -306,9 +287,9 @@ for it=2:length(T);
 %         end
 %         display(['t=' num2str(T(it)) '  cfl=' num2str(cfl,'%1.3f')]);
 %     end
-    
+
     if rem(it,Nplot)==1||it==length(T)
-        
+
             Ekl=EE;
             Er=0*Kr;
             for ir = 1:length(Kr)
@@ -316,32 +297,32 @@ for it=2:length(T);
                 fkr = ones(size(wv)).*(wv>=kr-dkr/2 & wv<= kr+dkr/2);
                 fkr=round(fkr);
                 dth = 2*pi/(sum(fkr(:))-1);
-                Er_int = Ekl.*wv.^1.*fkr;    
+                Er_int = Ekl.*wv.^1.*fkr;
                 Er(ir) = sum(Er_int(:))*dth;
             end
 %%
             figure(298)
             loglog(Kr,Er,'*-','linewidth',3)
-            
+
             hold on;
             plot(Kr,40*Kr.^(-5/3),'-k');
             hold off;
             xlim([1e0 Nx])
-            
+
             ylim([1e-7 1e-1])
             ylim([1e-3 1e1])
 
         %%
         psihat = zhat./del2;
-        zeta=real(ifft2(zhat));      
+        zeta=real(ifft2(zhat));
         psi = real(ifft2(psihat));
         u = real(ifft2(-1i*KY.*psihat));
         v = real(ifft2(+1i*KX.*psihat));
         cfl = sqrt(max((u(:)).^2+v(:).^2))*dt/dx;
         display(['t=' num2str(T(it)) '  cfl=' num2str(cfl,'%1.3f') '  E=' num2str(Ep(it),'%1.9f') ]);
-            
+
         nRow=2;nCol=2;
-        
+
         figure(figNo);clf;
         subplot(nRow,nCol,2)
         pcolor(X,Y,zeta);shading interp;
@@ -374,13 +355,13 @@ for it=2:length(T);
         title('b: $Z/Z(t=0)$~,~r: $E/E(t=0)$','fontsize',18,'interpreter','latex');
         xlabel('$t$','fontsize',18,'interpreter','latex');
         xlim([0 T(it)]);
-        
+
         drawnow;
 
-        
-        
+
+
     end
-        
+
 %     if rem(it,round(length(T)/20))==1||it==length(T)
 %         save(filenamesav);
 %     end
@@ -388,4 +369,3 @@ end
 toc
 
 % save(filenamesav);
-
