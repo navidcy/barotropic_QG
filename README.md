@@ -10,4 +10,4 @@ Navid C. Constantinou. Scripps Institution of Oceanography, UC San Diego. 2016
 
 This repository is not being maintained anymore. 
 
-An alternative is the [Julia](https://www.julialang.org) package [GeophysicalFlows.jl](http://github.com/FourierFlows/GeophysicalFlows.jl) and in particular the module [BarotropicQG](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/modules/barotropicqg/). Check out [this example](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/generated/barotropicqg_betaforced/).
+An alternative is the [Julia](https://www.julialang.org) package [GeophysicalFlows.jl](http://github.com/FourierFlows/GeophysicalFlows.jl) and in particular the module [SingleLayerQG](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/modules/singlelayerqg/). Check out [this example](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/generated/singlelayerqg_betaforced/).
