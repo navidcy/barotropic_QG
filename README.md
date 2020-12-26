@@ -6,7 +6,7 @@ A pseudospectral code for solving the barotropic vorticity equation on a beta-pl
 
 ## Time-stepping Scheme
 
-For time-stepping the exponential time-differencing Runge-Kutta 4th order scheme is used. More details in [these notes](https://github.com/navidcy/ETDRK4_notes/blob/master/ETDRK4-timestepping.pdf)
+For time-stepping the exponential time-differencing Runge-Kutta 4th order scheme is used. More details can be found in [these notes](https://github.com/navidcy/ETDRK4_notes/blob/master/ETDRK4-timestepping.pdf).
 
 ## Author
 
